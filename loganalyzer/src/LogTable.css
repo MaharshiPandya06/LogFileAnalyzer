@@ -1,0 +1,38 @@
+.table-container {
+    width: 2000px; /* Set the desired fixed width */
+    height: 300px; /* Set the desired fixed height */
+    overflow: auto;
+    position: relative;
+    margin: 0 auto;
+}  
+
+.log-table {
+    max-height: 300px; /* Adjust the height as needed */
+    overflow: auto;
+    text-align: center;
+}
+ 
+/* Make the table header sticky */
+.log-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #f5f5f5; /* Optional: Set a background color for the header */
+}
+
+/* Optional: Add some styling to the table rows and cells */
+.log-table table {
+border-collapse: collapse;
+width: 100%;
+}
+
+.log-table th, .log-table td {
+border: 1px solid #ddd;
+padding: 8px;
+text-align: left;
+}
+
+.search-bar {
+    justify-content: space-between;
+    text-align: center;
+    align-items: center ;
+}

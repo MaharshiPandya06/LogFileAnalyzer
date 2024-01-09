@@ -1,0 +1,10 @@
+.log-level-freq-card {
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    padding: 10px;
+    text-align: center;
+    width: 150px;
+    border-radius: 5px;
+    background-color: beige;
+}

@@ -1,0 +1,81 @@
+.App {
+  text-align: left;
+  padding: 50px;
+}
+/* 
+
+body {
+  margin: 0;
+  padding: 0;
+  background: url('C:\Users\2000108412\Documents\LogFileAnalyzer\loganalyzer\public\OIP.jpg') no-repeat center center fixed;
+  background-size: cover;
+  height: 100vh;
+} */
+
+body {
+  margin: 0; /* Remove default margin */
+}
+
+
+input {
+  margin-bottom: 30px;
+}
+
+button {
+  color: black;
+  padding: 5px;
+  cursor: pointer;
+  border: 2px solid gray;
+  color: black;
+  background-color: #04bef1;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.heading{
+  color: black ;
+  padding-top: 15px;
+  font-size: 70px;
+  font-style: italic;
+  font-family:  'Times New Roman', Times, serif;
+}
+
+input[type="file"] {
+  display: inline-block; /* Hide the default file input appearance */
+}
+
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+
+.upload-btn-wrapper input[type=file] {
+  padding: 10px;
+  font-size: 50px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
+
+/* App.css */
+.dropbox-label {
+  display: inline-block;
+  background-color: #0061fe;
+  color: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.dropbox-label img {
+  width: 50px; /* Adjust the size as needed */
+  margin-right: 8px;
+}
+
