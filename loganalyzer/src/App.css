@@ -16,6 +16,14 @@ body {
   margin: 0; /* Remove default margin */
 }
 
+.selected-file-box {
+  margin-top: 20px;
+}
+.selected-file-box:hover {
+  cursor: pointer;
+  background: black;
+  color: white;
+}
 
 input {
   margin-bottom: 30px;
@@ -38,8 +46,7 @@ button {
   color: black ;
   padding-top: 15px;
   font-size: 70px;
-  font-style: italic;
-  font-family:  'Times New Roman', Times, serif;
+  font-family:  'Helvetica', Times, serif;
 }
 
 input[type="file"] {

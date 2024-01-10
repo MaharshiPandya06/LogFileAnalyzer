@@ -51,7 +51,7 @@ const LineChart = ({ logs }) => {
                   const valueToLogLevel = {
                     1: 'INFO',
                     2: 'DEBUG',
-                    3: 'WARNING',
+                    3: 'WARN',
                     4: 'ERROR',
                   };
                   return valueToLogLevel[value] || '';

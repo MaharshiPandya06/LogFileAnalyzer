@@ -1,5 +1,6 @@
 from ast import parse
-from flask import Flask, request, jsonify, send_from_directory
+from operator import index
+from flask import Flask, request, jsonify, send_from_directory, make_response
 from flask_cors import CORS
 import requests
 import os
@@ -9,6 +10,16 @@ from logparser.json_parser import json_parser
 from logparser.hadoop_parser import hadoop_parser, is_hadoop_log_file
 from logparser.zookeeper_parser import zookeeper_parser, is_zookeeper_log_file
 from logparser.hdfs_parser import hdfs_parser, is_hdfs_log_file
+import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+# from weasyprint import HTML
+from io import BytesIO
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Paragraph, Spacer
+from reportlab.lib.styles import ParagraphStyle
 
 app = Flask(__name__)
 CORS(app)
@@ -16,7 +27,7 @@ CORS(app)
 uploaded_files = []
 
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'log', 'syslog', 'json'}
+ALLOWED_EXTENSIONS = {'log', 'json'}
 
 OUTPUT_FOLDER = 'parsed_logs'
 MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10 MB maximum file size
@@ -110,6 +121,90 @@ def handle_uploaded_file(file_path, file_extension):
         else:
             clf_parser(file_path, app.config['OUTPUT_FOLDER'])
 
+@app.route('/generate_pdf', methods=['POST'])
+def generate_pdf():
+    if request.json['start_timestamp'] == '' and request.json['end_timestamp'] == '':
+        start_timestamp = None
+        end_timestamp = None
+    elif request.json['start_timestamp'] != '' and request.json['end_timestamp'] == '':
+        start_timestamp = pd.to_datetime(request.json['start_timestamp'])
+        end_timestamp = None
+    elif request.json['start_timestamp'] == '' and request.json['end_timestamp'] != '':
+        start_timestamp = None
+        end_timestamp = pd.to_datetime(request.json['end_timestamp'])
+    else:
+        start_timestamp = pd.to_datetime(request.json['start_timestamp'])
+        end_timestamp = pd.to_datetime(request.json['end_timestamp'])
+
+    logs_df = pd.read_json('parsed_logs/output.json')
+    logs_df.sort_values(by='timestamp', inplace=True)
+    logs_df['timestamp'] = pd.to_datetime(logs_df['timestamp'], format='ISO8601')
+    filtered_logs = logs_df
+    
+    if start_timestamp and end_timestamp:
+        filtered_logs = logs_df[(logs_df['timestamp'] >= start_timestamp) & (logs_df['timestamp'] <= end_timestamp)]
+    elif start_timestamp and not end_timestamp:
+        filtered_logs = logs_df[(logs_df['timestamp'] >= start_timestamp)]
+    elif not start_timestamp and end_timestamp:
+        filtered_logs = logs_df[(logs_df['timestamp'] <= end_timestamp)]
+
+    line_chart_buffer = BytesIO()
+    plt.figure(figsize=(12,9))
+    plt.plot(filtered_logs['timestamp'], filtered_logs['log_level'], marker='o')
+    plt.xlabel('Timestamp')
+    plt.ylabel('Log Level')
+    plt.title('Line Chart')
+    plt.xticks(rotation=45, ha='right')
+    plt.savefig(line_chart_buffer, format='png')
+    plt.close()
+    normal_style = ParagraphStyle(
+        'Normal',
+        fontName='Helvetica',
+        fontSize=8,
+        textColor=colors.black,
+        wordWrap='CJK',  # Enable word wrapping for CJK languages (Chinese, Japanese, Korean)
+    )
+    messages = [Paragraph(text, style=normal_style) for text in filtered_logs['message']]
+
+    table_data = [filtered_logs.columns] + list(zip(filtered_logs['timestamp'], filtered_logs['log_level'], messages))
+
+    
+
+    pdf_buffer = BytesIO()
+    pdf = SimpleDocTemplate(pdf_buffer, pagesize=landscape(letter))
+
+    pdf_buffer.seek(0)
+
+    # image = Image(line_chart_path, width=400, height=200)
+    # pdf.build([image])
+    col_widths = [120, 80, 300]
+    table = Table(table_data, colWidths=col_widths)
+    style = TableStyle([
+                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                        ])
+    table.setStyle(style)
+    # pdf.build([table])
+    
+    dummy_space = Spacer(1, 20)
+
+    line_chart_buffer.seek(0)
+    line_chart_image = Image(line_chart_buffer, width=400, height=300)
+    # pdf.build([line_chart_image] + [table])
+    pdf.build([line_chart_image, dummy_space, table])
+
+    pdf_bytes = pdf_buffer.getvalue()
+
+    response = make_response(pdf_bytes)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'attachment; filename=logs_report.pdf'
+
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)

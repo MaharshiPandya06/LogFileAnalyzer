@@ -3,7 +3,6 @@ import './App.css';
 import TableComponent from './LogTable';
 import LineChart from './LineChart';
 import Dashboard from './temp/Dashboard';
-import html2pdf from 'html2pdf.js';
 
 function App() {
   const [file, setFile] = useState(null);
@@ -11,7 +10,7 @@ function App() {
   const [selectedFileName, setSelectedFileName] = useState('');
   const fileInputRef = useRef(null);
   const [isUploaded, setIsUploaded] = useState(false);
-  const dashboardRef = useRef();
+  // const dashboardRef = useRef();
 
   useEffect(() => {
     // Fetch the list of uploaded files when the component mounts
@@ -33,17 +32,6 @@ function App() {
     setSelectedFileName(selectedFile ? selectedFile.name : '');
   };
 
-  const handleDownload = () => {
-    const content = dashboardRef.current;
-
-    html2pdf(content, {
-      margin: 10,
-      filename: 'dashboard_report.pdf',
-      image: { type: 'png', quality: 1 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: '', orientation: 'landscape' },
-    });
-  };
 
   const handleUpload = async () => {
     if (!file) {
@@ -71,7 +59,7 @@ function App() {
         // as the backend will now save the file in the "uploads" folder.
 
       } else {
-        alert(`Error: ${result.error}`);
+        alert(`Error: ${result.error}. Only .log and .json files are supported.`);
       }
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -81,19 +69,23 @@ function App() {
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
-
+  const handleBack = () => {
+    setIsUploaded(false);
+    setFile(null);
+  }
 
   return (
     <div className="App">
       {!isUploaded && (
         <>
+        <center>
       <h1 className='heading'> Log File Analyzer </h1>
       <label htmlFor="file-input" className="dropbox-label">
         <img src="/R.png" alt="Dropbox Logo" />
         {file ? (
           <span> {file.name}</span>
         ) : (
-          <span>Drop File</span>
+          <span>Choose File</span>
         )}
       </label>
       <input
@@ -103,13 +95,16 @@ function App() {
         onChange={handleFileChange}
         style={{ display: 'none' }}
       />
+      </center>
       </>
       )}
 
       {file && (
-        <div className="selected-file-box">
-          <button onClick={handleUpload}>Upload</button>
+        <center>
+        <div >
+          <button onClick={handleUpload} className="selected-file-box">Upload</button>
         </div>
+        </center>
       )}
 
 
@@ -131,14 +126,16 @@ function App() {
 
       {/* Table of log files */}
       {isUploaded && (
-        <div ref={dashboardRef}>
+        <div>
+        <button onClick={handleBack}>Back</button>
+
           {/* <TableComponent />
           <div>
             <h1>Log Line Chart</h1>
             <LineChart logs={logs} />
           </div> */}
           <Dashboard/>
-          <button onClick={handleDownload}>Download PDF</button>
+          
         </div>
 
       )}

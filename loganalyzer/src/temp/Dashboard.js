@@ -26,8 +26,11 @@ const Dashboard = () => {
     setLogs(newLogs);
   };
 
+
+
   return (
     <div>
+      
       <center><h1>Dashboard</h1></center>
       <TableComponent logs={logs} setLogs={updateLogs} originalLogs={originalLogs} />
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', marginTop: '20px' }}>

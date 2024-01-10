@@ -57,8 +57,15 @@ text-align: left;
 .clear-filter-button {
     background-color: rgb(253, 253, 56);
     border: none;
+    margin-right: 20px;
 }
 
 .clear-filter-button:hover  {
     background: rgb(248, 248, 85);
+}
+
+.download-button {
+    background-color: rgb(50, 226, 59);
+    border: none;
+    margin-right: 20px;
 }
