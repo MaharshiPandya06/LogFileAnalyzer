@@ -1,7 +1,10 @@
-// LineChart.js
 import React, { useRef, useEffect,useState } from 'react';
 import Chart from 'chart.js/auto';
 
+/**
+ * Line chart component that shows the line chart with various log
+ * levels on the Y-axis and timestamps on the X-axis.
+ */
 const LineChart = ({ logs }) => {
   const chartRef = useRef(null);
   const [hoveredLog, setHoveredLog] = useState(null);

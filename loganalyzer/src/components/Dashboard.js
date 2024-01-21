@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TableComponent from './TableComponent';
 import LineChart from './LineChartComponent';
-import LogLevelSummary from './LogLevelFreq';
+import LogLevelFreq from './LogLevelFreq';
 
 const Dashboard = () => {
   const [logs, setLogs] = useState([]);
@@ -22,11 +22,12 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  /**
+   * Updates the logs to be displayed whenever filters are added.
+   */
   const updateLogs = (newLogs) => {
     setLogs(newLogs);
   };
-
-
 
   return (
     <div>
@@ -34,11 +35,11 @@ const Dashboard = () => {
       <center><h1>Dashboard</h1></center>
       <TableComponent logs={logs} setLogs={updateLogs} originalLogs={originalLogs} />
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', marginTop: '20px' }}>
-        <LogLevelSummary logs={logs} logLevel="INFO" />
-        <LogLevelSummary logs={logs} logLevel="WARNING" />
-        <LogLevelSummary logs={logs} logLevel="ERROR" />
-        <LogLevelSummary logs={logs} logLevel="DEBUG" />
-        <LogLevelSummary logs={logs} logLevel="FATAL" />
+        <LogLevelFreq logs={logs} logLevel="INFO" />
+        <LogLevelFreq logs={logs} logLevel="WARNING" />
+        <LogLevelFreq logs={logs} logLevel="ERROR" />
+        <LogLevelFreq logs={logs} logLevel="DEBUG" />
+        <LogLevelFreq logs={logs} logLevel="FATAL" />
       </div>
       <LineChart logs={logs} />
     </div>

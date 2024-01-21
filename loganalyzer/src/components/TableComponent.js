@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './TableComponent.css';
 
+/**
+ * Table component that shows all the logs in the following columns:
+ * - Timestamp
+ * - Log Level
+ * - Log message
+ */
 const TableComponent = ({ logs, setLogs, originalLogs }) => {
   const [startTimestamp, setStartTimestamp] = useState('');
   const [endTimestamp, setEndTimestamp] = useState('');
@@ -14,6 +20,9 @@ const TableComponent = ({ logs, setLogs, originalLogs }) => {
     setLogs(sortedOriginalLogs);
   }, []);
 
+  /**
+   * Handles the event of search button getting clicked.
+   */
   const handleSearch = () => {
     // Filter logs based on the timestamp range
     const filteredLogs = originalLogs.filter(log => {
@@ -21,10 +30,6 @@ const TableComponent = ({ logs, setLogs, originalLogs }) => {
       const startTimestampMillis = new Date(startTimestamp).getTime();
       const endTimestampMillis = new Date(endTimestamp).getTime();
       
-      // const isWithinTimestampRange =
-      // !startTimestamp || !endTimestamp ||
-      // (logTimestamp >= startTimestampMillis && logTimestamp <= endTimestampMillis);
-
       const isWithinTimestampRange =
       (!startTimestamp || logTimestamp >= startTimestampMillis) &&
       (!endTimestamp || logTimestamp <= endTimestampMillis)
@@ -36,11 +41,13 @@ const TableComponent = ({ logs, setLogs, originalLogs }) => {
 
     // Sort filtered logs based on timestamp before updating the state
     const sortedFilteredLogs = filteredLogs.slice().sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-    // console.log(sortedFilteredLogs)
     // Update the state with the filtered logs
     setLogs(sortedFilteredLogs);
   };
 
+  /**
+   * Handles the clear filter button click event.
+   */
   const handleClearFilter = () => {
     // Clear filter values and reset logs to the original state
     setStartTimestamp('');
@@ -48,19 +55,6 @@ const TableComponent = ({ logs, setLogs, originalLogs }) => {
     setSelectedLogLevel('');
     setLogs(originalLogs);
   };
-
-  // const handleDownload = () => {
-  //   fetch(`http://localhost:5000/generate_pdf?timestamp1=${startTimestamp}&timestamp2=${endTimestamp}`)
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       // Handle the API response data
-  //       console.log(data);
-  //     })
-  //     .catch(error => {
-  //       // Handle errors
-  //       console.error('Error fetching data:', error);
-  //     });
-  // };
 
   const handleDownload = async () => {
     // Assuming you have the server URL where the Flask app is running
@@ -78,23 +72,23 @@ const TableComponent = ({ logs, setLogs, originalLogs }) => {
       }),
     });
 
-    // Checking if the request was successful (status code 200)
+    // Check if the request was successful
     if (response.ok) {
-      // Converting the response to a Blob
+      // Convert the response to a Blob
       const blob = await response.blob();
 
-      // Creating a URL for the Blob
+      // Create a URL for the Blob
       const url = URL.createObjectURL(blob);
 
-      // Creating a download link
+      // Create a download link
       const link = document.createElement('a');
       link.href = url;
       link.download = 'logs_report.pdf';
 
-      // Triggering a click on the link to start the download
+      // Trigger a click on the link to start the download
       link.click();
 
-      // Cleaning up the URL created for the Blob
+      // Clean up the URL created for the Blob
       URL.revokeObjectURL(url);
     } else {
       console.error('Error generating PDF:', response.statusText);

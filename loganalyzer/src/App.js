@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import './App.css';
-import Dashboard from './temp/Dashboard';
+import Dashboard from './components/Dashboard';
 
 /**
  * Main component for the Log File Analyzer web app.

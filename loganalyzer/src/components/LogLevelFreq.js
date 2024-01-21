@@ -1,7 +1,11 @@
 import React from 'react';
 import './LogLevelFreq.css'
 
-const LogLevelSummary = ({ logs, logLevel }) => {
+/**
+ * Log level frequency component that keeps track of the count
+ * of log levels.
+ */
+const LogLevelFreq = ({ logs, logLevel }) => {
   // Filter logs based on the specified log level
   const filteredLogs = logs.filter(log => log.log_level === logLevel || (logLevel === 'WARNING' && log.log_level === 'WARN'));
 
@@ -13,4 +17,4 @@ const LogLevelSummary = ({ logs, logLevel }) => {
   );
 };
 
-export default LogLevelSummary;
+export default LogLevelFreq;
