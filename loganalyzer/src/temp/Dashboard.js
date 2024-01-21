@@ -38,6 +38,7 @@ const Dashboard = () => {
         <LogLevelSummary logs={logs} logLevel="WARNING" />
         <LogLevelSummary logs={logs} logLevel="ERROR" />
         <LogLevelSummary logs={logs} logLevel="DEBUG" />
+        <LogLevelSummary logs={logs} logLevel="FATAL" />
       </div>
       <LineChart logs={logs} />
     </div>

@@ -21,13 +21,13 @@ const TableComponent = ({ logs, setLogs, originalLogs }) => {
       const startTimestampMillis = new Date(startTimestamp).getTime();
       const endTimestampMillis = new Date(endTimestamp).getTime();
       
-      const isWithinTimestampRange =
-      !startTimestamp || !endTimestamp ||
-      (logTimestamp >= startTimestampMillis && logTimestamp <= endTimestampMillis);
-
       // const isWithinTimestampRange =
-      // (logTimestamp >= startTimestampMillis && endTimestampMillis == '') || (startTimestampMillis == '' && logTimestamp <= endTimestampMillis) ||
+      // !startTimestamp || !endTimestamp ||
       // (logTimestamp >= startTimestampMillis && logTimestamp <= endTimestampMillis);
+
+      const isWithinTimestampRange =
+      (!startTimestamp || logTimestamp >= startTimestampMillis) &&
+      (!endTimestamp || logTimestamp <= endTimestampMillis)
 
       const isMatchingLogLevel = !selectedLogLevel || (log.log_level && log.log_level.toLowerCase()) === selectedLogLevel.toLowerCase() || (selectedLogLevel === 'WARNING' && log.log_level === 'WARN');
       

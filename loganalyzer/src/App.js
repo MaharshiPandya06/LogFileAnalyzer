@@ -1,28 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import './App.css';
-import TableComponent from './LogTable';
-import LineChart from './LineChart';
 import Dashboard from './temp/Dashboard';
 
+/**
+ * Main component for the Log File Analyzer web app.
+ */
 function App() {
   const [file, setFile] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [selectedFileName, setSelectedFileName] = useState('');
   const fileInputRef = useRef(null);
   const [isUploaded, setIsUploaded] = useState(false);
-  // const dashboardRef = useRef();
 
-  useEffect(() => {
-    // Fetch the list of uploaded files when the component mounts
-    fetch('http://localhost:5000/get_uploaded_files')
-      .then(response => response.json())
-      .then(data => setUploadedFiles(data.files))
-      .catch(error => console.error('Error fetching uploaded files:', error));
-  }, []); // Empty dependency array to run the effect only once
-
+  /**
+   * Handles the change event, that is, checks the size of the uploaded file.
+   * @param {Object} e - The change event.
+   */
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-
+    // Check if the uploaded file is less than or equal to 10 MB.
     if (selectedFile && selectedFile.size > 10 * 1024 * 1024) {
       alert('File size exceeds the limit of 10 MB. Please select a smaller file.');
       return;
@@ -32,7 +28,10 @@ function App() {
     setSelectedFileName(selectedFile ? selectedFile.name : '');
   };
 
-
+  /**
+   * Handles the file, stores the input file to formData and calls the /upload
+   * API.
+   */
   const handleUpload = async () => {
     if (!file) {
       alert('Please select a file');
@@ -54,10 +53,7 @@ function App() {
         alert(result.message);
         setFile(null); // Clear the selected file after successful upload
         setSelectedFileName(''); // Clear the selected file name
-        setIsUploaded(true)
-        // No need to fetch the updated list of uploaded files,
-        // as the backend will now save the file in the "uploads" folder.
-
+        setIsUploaded(true);
       } else {
         alert(`Error: ${result.error}. Only .log and .json files are supported.`);
       }
@@ -66,9 +62,9 @@ function App() {
     }
   };
 
-  const handleButtonClick = () => {
-    fileInputRef.current.click();
-  };
+  /**
+   * Navigates back to the initial state before file upload.
+   */
   const handleBack = () => {
     setIsUploaded(false);
     setFile(null);
@@ -128,12 +124,6 @@ function App() {
       {isUploaded && (
         <div>
         <button onClick={handleBack}>Back</button>
-
-          {/* <TableComponent />
-          <div>
-            <h1>Log Line Chart</h1>
-            <LineChart logs={logs} />
-          </div> */}
           <Dashboard/>
           
         </div>

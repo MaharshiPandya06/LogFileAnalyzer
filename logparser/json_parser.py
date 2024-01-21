@@ -28,7 +28,7 @@ def parse_json_log(log_entry):
             elif log_level_pattern.match(value):
                 parsed_log["log_level"] = value
             elif key == 'message' or key == 'content' or key == 'description':
-                print(f"key is {key}")
+                # print(f"key is {key}")
                 parsed_log["message"] = value
             else:
                 if not parsed_log["message"]:
